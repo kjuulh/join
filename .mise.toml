@@ -1,2 +1,24 @@
 [tools]
 go = "1.25"
+
+[tasks.test]
+description = "Run all tests with race detector"
+run = "go test -race ./..."
+
+[tasks."test:bench"]
+description = "Run bench module tests"
+dir = "bench"
+run = "go test -race ./..."
+
+[tasks.vet]
+description = "Run go vet"
+run = "go vet ./..."
+
+[tasks.bench]
+description = "Run benchmarks"
+dir = "bench"
+run = "go test -bench=. -benchmem -count=3 -timeout=120s ./..."
+
+[tasks.ci]
+description = "Run all CI checks"
+depends = ["test", "test:bench", "vet"]

@@ -7,19 +7,12 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: jdx/mise-action@v2
 
-      - name: Test
-        run: go test -race ./...
-
-      - name: Test bench module
-        run: go test -race ./...
-        working-directory: bench
-
-      - name: Vet
-        run: go vet ./...
+      - name: CI
+        run: mise run ci
