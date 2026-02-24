@@ -1,4 +1,4 @@
-package join_test
+package bench_test
 
 import (
 	"context"
