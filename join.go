@@ -227,9 +227,20 @@ func Map[In, Out any](ctx context.Context, inputs []In, fn func(context.Context,
 
 	results := make([]Out, len(inputs))
 	for i, in := range inputs {
-		run(r, func(ctx context.Context) (Out, error) {
-			return fn(ctx, in)
-		}, &results[i])
+		go func() {
+			defer r.wg.Done()
+			defer func() {
+				if rec := recover(); rec != nil {
+					r.setErr(fmt.Errorf("join: panic: %v", rec))
+				}
+			}()
+			v, err := fn(r.ctx, in)
+			if err != nil {
+				r.setErr(err)
+				return
+			}
+			results[i] = v
+		}()
 	}
 
 	if err := r.wait(); err != nil {
